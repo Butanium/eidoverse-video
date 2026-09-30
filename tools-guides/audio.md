@@ -312,8 +312,9 @@ globalThis.renderFrame = async function (t) {
 ```
 
 `claude_suit.vrm`'s mouth (and `claude_suit_wardrobe.vrm`'s) is a special case:
-raw morphs rather than expressions, and a threshold reveal that a scaled pose
-makes flicker. Drive it with `makeSuitMouth` from `eidoverse/claudesona_face.js`,
+its own shapes slide a flat plate off the face, and a mouth scaled straight by
+loudness snaps shut on every consonant. Drive it with `installSuitMouth` and
+`makeSuitMouth` from `eidoverse/claudesona_face.js`,
 feeding it these same viseme frames with `inputMax: 0.35`; see
 [characters.md](characters.md).
 
