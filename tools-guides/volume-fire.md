@@ -23,6 +23,12 @@ Supply the actual mesh that burns. With `emitterPoints:null`, emission samples
 its raw vertices; a count uses area-weighted surface samples, which are more
 appropriate for low-poly meshes with uneven vertex density. Build/sample once.
 
+Scale and placement: the simulation box defaults to the source example's
+12 × 12 × 24 m (`worldSize`), centred on the origin and starting 0.4 m above it.
+The example burns a teapot about 1 m across (`emitterRadius` 1, `flameHeight`
+3.5). Put the burning mesh inside the box at that kind of scale: a small mesh, or
+one below the box's floor, emits little or nothing and reads as a faint glow.
+
 The returned object exposes `volumeMesh`, `shadowMesh`, `pointLight`,
 `volumetricMaterial`, `params`, `uniforms`, `simTime`, `step`, `warmup`,
 `makeLavaEmissive` and `dispose`. The module attaches the fire light to the
