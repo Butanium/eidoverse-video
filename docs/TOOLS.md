@@ -25,7 +25,7 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/assets/sets/corner_src/](../eidoverse/assets/sets/corner_src/README.md) | Asset source: Blender/PIL scripts that built the corner set | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/sets/funeral_src/](../eidoverse/assets/sets/funeral_src/README.md) | Asset source: Blender scripts that built the funeral set | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/sets/ocean_src/](../eidoverse/assets/sets/ocean_src/README.md) | Asset source: Blender scripts that built the ocean set | [props-and-sets](../tools-guides/props-and-sets.md) |
-| [eidoverse/assets/vrms/claude_suit_wardrobe_src/](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md) | Asset source: packed .blend, export script and garment recipes | [blender](../tools-guides/blender.md) |
+| [eidoverse/assets/vrms/claude_suit_wardrobe_src/](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md) | Asset source: packed .blend, export script, garment recipes and the petal-ring pivot tool | [blender](../tools-guides/blender.md) |
 | [eidoverse/asteroid_moon.js](../eidoverse/asteroid_moon.js) | Explicit facade/package component | [sky-weather](../tools-guides/sky-weather.md) |
 | [eidoverse/audit_core.js](../eidoverse/audit_core.js) | System support; see guide for entry point | [render-review](../tools-guides/render-review.md) |
 | [eidoverse/audit_core_test.mjs](../eidoverse/audit_core_test.mjs) | Test suite | [development](../tools-guides/development.md) |
