@@ -140,6 +140,37 @@ anywhere you'd reach for `TextureLoader` in a browser. (Brand/logo art:
 real transparent PNGs declared as assets read on-brand; a hand-rolled
 procedural approximation of a logo doesn't.)
 
+### The shared library — library code names IDs, never commits them
+
+Third-party CC0 sets (AmbientCG, Poly Haven, TextureCan) are fetched, never
+committed. Code that ships in the repository (sets, props, outfits) names
+the exact IDs it reads, and the shared library fetches each one once into
+`eidoverse/assets/cache/` (git-ignored):
+
+```bash
+python fetch_texture.py Concrete031 1k --cache          # -> eidoverse/assets/cache/textures/Concrete031_1k/
+python fetch_model.py metal_trash_can --cache --res 2k  # -> eidoverse/assets/cache/models/metal_trash_can_2k/
+```
+
+An ID already in the library is not fetched again. Each folder holds the
+maps (Poly Haven's too, downloaded rather than linked), `tex_urls.json` and
+a `license.json` (models: the usual `.license.json` sidecar). In the engine:
+
+```js
+const { files } = await fetchPBR('Concrete031', { res: '1k' });   // { diff, normal, rough, ao, metal, displacement, … } -> paths
+const t = await loadPBR('Concrete031', { res: '1k', maps: ['diff', 'normal', 'rough'] });
+const mat = new THREE.MeshStandardNodeMaterial({ map: t.map, normalMap: t.normalMap, roughnessMap: t.roughnessMap });
+const gltfPath = await fetchModelFile('metal_trash_can', { res: '2k' });   // read it like any local model
+```
+
+Each runs the fetcher on first use, so a fresh clone renders without a setup
+step. Offline, or with `EIDO_NO_FETCH=1`, a missing ID throws with the
+one-line fetch command. Name the maps a material reads (`maps`, or the
+`files` you pick): a set grows extra maps (AO, displacement) that would
+change a look tuned without them. Models you build yourself are not
+third-party: they go in the model library, `eidoverse/assets/models/`, as
+`<set>_<name>.glb`, where `fetch_model.py --list-local` finds them.
+
 ## Loading GLBs in the scene
 
 ```js

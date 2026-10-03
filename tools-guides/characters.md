@@ -37,13 +37,16 @@ fetched props):
   The outfit is built in layers (mesh names `jacket`, `tie`, `shirt`,
   `pants`, `shoes`): hide layers to change the look (jacket + tie off =
   casual shirtsleeves).
-- `claude_suit_wardrobe.vrm` — the same claudesona carrying sixteen outfits
-  as hidden layers (a 1939 switchboard operator, a 1961 lab coat, 1980s
-  colour-blocking, a hoodie, a mourning coat, an 1890s cycling outfit and
-  more); `claude_suit_wardrobe_preview.jpg` shows them all. Dress it with
-  `claudesona_wardrobe.js` ([outfits](#outfits--claude_suit_wardrobevrm)).
-  It is 31 MB against the suit's 11 MB, so cast `claude_suit.vrm` when the suit
-  is all the piece needs.
+- `claude_suit_wardrobe.vrm` — the same claudesona carrying seventeen outfits
+  as hidden layers: sixteen from the DAISY music video (a 1939 switchboard
+  operator, a 1961 lab coat, 1980s colour-blocking, a hoodie, a mourning coat,
+  an 1890s cycling outfit and more; `claude_suit_wardrobe_preview.jpg`) and
+  the TuTa from UNKNOWN FORCE, black techwear with neon piping, techwear boots,
+  Balla's five snap-on badges and an optional sun disc
+  (`claude_suit_wardrobe_preview_tuta.jpg`). Dress it with
+  `claudesona_wardrobe.js` ([outfits](#outfits--claude_suit_wardrobevrm),
+  [the TuTa](#the-tuta)). It is 34 MB against the suit's 11 MB, so cast
+  `claude_suit.vrm` when the suit is all the piece needs.
 - `claude.vrm` — a lightweight Claude stand-in; `claude_suit.vrm` is primary
 
 Any `.vrm` dropped into `eidoverse/assets/vrms/` works the same way. Point
@@ -95,6 +98,15 @@ missing is skipped:
   hold with a short `fade` once it lands. Beats, uses, the authoring script and
   its checker are in
   [performance_src](../eidoverse/assets/animations/performance_src/README.md).
+- **Performance, UNKNOWN FORCE** (92.90 BPM; darker and smaller: grounded,
+  slow, minimal; the same stance as the clips above, so the two sets
+  crossfade): `still_breathe` (their idle), `dark_groove`, `sing_low` and
+  `sing_low_mirror`, `turn_it_down`, `not_that` and `not_that_mirror`,
+  `look_up`, `salute_abort`, `fence_hands`, `ask_me`. `turn_it_down`,
+  `look_up`, `fence_hands` and `ask_me` each have a `*_hold` loop. The
+  [table below](#performance-clips-unknown-force) says what each does; the
+  authoring script and its checker are in
+  [performance_uf_src](../eidoverse/assets/animations/performance_uf_src/README.md).
 
 `playVRMADefault(vrm, slot, { loop, fade })` returns `{ mixer, action, clip }`
 and registers that VRM for the native frame loop. Repeat is the default;
@@ -119,6 +131,56 @@ controller (`body.walkTo(x, z)` / waypoints), which moves the body and
 grounds the feet with IK. The one genuine in-place case — a VRM on a
 treadmill or carried by a vehicle — passes `{ force: true }` (or sets
 `globalThis._allowManualLocomotion = true`).
+
+### Performance clips (UNKNOWN FORCE)
+
+Authored for the claudesona in the TuTa at 92.90 BPM: one beat is 0.64584 s, a
+bar 2.583 s. She is calm and unbothered, never pleading. Loops start on beat 1
+and last whole beats, and each one-shot that holds hands over to its `*_hold`
+loop on its exact last frame.
+
+| Clip | Beats | Kind | What she does |
+| --- | ---: | --- | --- |
+| `still_breathe` | 8 | loop | Almost motionless: one breath per bar, the head drifting a degree or two. The neutral between gestures, and the hush. |
+| `dark_groove` | 8 | loop | Low and slow, for a chorus. The knees are soft and the weight crosses on beats 1 and 3. The shoulders roll slowly back, the head nods on 2 and 4, and the hanging arms swing late. |
+| `sing_low`, `sing_low_mirror` | 4 | loop | A sung line. One hand at belly height opens palm up on beat 1 and closes into a loose cup on 3; the other arm hangs. |
+| `turn_it_down` | 4 | one-shot | The gesture for "could you turn it down?". The right hand comes up to the bottom of the chest, palm down, and presses slowly down to the belt like a fader. The head tilts to watch it. |
+| `turn_it_down_hold` | 8 | loop | The room is quieter: the hand stays low, with one breath per two bars. |
+| `not_that`, `not_that_mirror` | 2 | one-shot | A calm no. A hand rises to shoulder height and shows its palm, the head turns about 20° away, and the hand drops back to the stance. |
+| `look_up` | 4 | one-shot | A small dip, then the face lifts to 50°, mostly in the neck. |
+| `look_up_hold` | 8 | loop | The gaze travels round a ring at 49–51° of elevation, from +44° to −36°. |
+| `salute_abort` | 6 | one-shot | The hand flattens into a salute and starts toward the brim, then stops at the upper chest. It hangs there a beat and lowers, unhurried. |
+| `fence_hands` | 3 | one-shot | No step: both hands come up and hook into a chain-link fence at the top of the chest. |
+| `fence_hands_hold` | 8 | loop | She breathes, with her hands locked to the fence (the palms move 0.0 mm). |
+| `ask_me` | 4 | one-shot | A small open palm offered toward the lens at belly height, the face square to +Z. |
+| `ask_me_hold` | 8 | loop | Only the breath moves, countered in the neck so the face never leaves the lens. |
+
+```js
+await playVRMADefault(vrm, 'still_breathe', { loop: true });                  // the first clip: no fade
+const once = await playVRMADefault(vrm, 'turn_it_down', { loop: false, fade: 0.3 });
+// …once.clip.duration seconds later, a hard cut onto its hold:
+await playVRMADefault(vrm, 'turn_it_down_hold', { loop: true, fade: 0 });
+```
+
+- **Locking a loop to a song.** Start a loop on beat 1 of a bar and it stays
+  locked, because every loop lasts 4 or 8 beats. Off the beat, set its phase once
+  after the call (`r` is what `playVRMADefault` returned): `r.action.time = ((t - barStart) % r.clip.duration + r.clip.duration) % r.clip.duration`.
+  For another tempo, set `r.action.timeScale = bpm / 92.9`.
+- **Timing `turn_it_down`.** The hand reaches the top at beat 1.15 and presses
+  from 1.45 to 3.05, so start it about a beat before the words.
+- **The fence.** `fence_hands` puts the hands on a plane 0.372 m in front of her
+  (film metres, the VRM at scale 0.87, facing +Z). Build the chain link there,
+  covering at least x ±0.45 m and y 0.5–1.6 m, and move it with her root.
+- **Facing.** `ask_me` faces +Z: turn her root toward the camera rather than
+  tilting the camera.
+- **Your own nods.** A conductor's beat nod on the head or chest doubles
+  `dark_groove`'s nods and breaks `ask_me` and `look_up`. Turn it off for them.
+- **Stance.** The engine's `idle`, `talk` and `dance` stand differently, so
+  crossfading to or from them slides the feet a little. `still_breathe` is the
+  matching neutral.
+
+The clips play on any claudesona (`claude_suit.vrm`, `claude_suit_wardrobe.vrm`);
+their flower clearances were tuned on the TuTa's body.
 
 ## Moving a character — the dialed-in controller
 
@@ -522,7 +584,7 @@ patterns, folds petals back under a hat and seats the hat.
 
 ```js
 const { makeWardrobe, WARDROBE } = await import(new URL('claudesona_wardrobe.js', EIDOVERSE_DIR).href);
-const wardrobe = makeWardrobe(THREE, vrm);   // after load; starts in 'suit'
+const wardrobe = await makeWardrobe(THREE, vrm);   // right after load (async); starts in 'suit' or opts.wear
 wardrobe.wear('lab_coat_1961');              // any WARDROBE key; a no-op if already worn
 wardrobe.petals('mac_launch_1984');          // repaint only the petals (a preset key or a spec); null restores
 ```
@@ -545,6 +607,7 @@ wardrobe.petals('mac_launch_1984');          // repaint only the petals (a prese
 | `march` | canvas work jacket with embroidered patches |
 | `sleeves_rolled` | jacket off, shirt sleeves rolled, tie |
 | `cyclist_1892` | striped jersey, tweed knickerbockers, argyle socks, a straw boater with the petals folded under it |
+| `tuta` | the UNKNOWN FORCE TuTa: black techwear one-piece, techwear boots, belt and straps ([the TuTa](#the-tuta)) |
 
 A preset is `{ show, paint, hide, fold, hat }`:
 
@@ -553,7 +616,8 @@ A preset is `{ show, paint, hide, fold, hat }`:
   `tie`, `shirt`, `pants`, `jersey`, `knickers`, `socks`, `boater`,
   `coat_skirt`, `shirt_rolled`, `acc_glasses`, `acc_headset`, `acc_pocket`,
   `acc_bowtie`, `acc_headband`, `acc_ribbons`, `acc_hoodie`, `acc_patches` and
-  `acc_boutonniere`.
+  `acc_boutonniere`. The `tuta` preset lists its own layers in `uf` (`tuta`,
+  `uf_boots`, `uf_straps`) and hides digi's shoes with `hideBase: ['shoes']`.
 - `paint` maps a material name to `'#hex'` or a pattern:
   - `{ pattern: 'stripes', a, b, scale }`, `'blocks'` (`a`, `b`, `c`),
     `'herringbone'` (`a`, `b`, `c` flecks, `scale`), `'gradient'` (`a`, `b`)
@@ -583,6 +647,107 @@ outfits reuses compiled shaders. Set `globalThis.WARDROBE_DEBUG = true` to
 log paints and folds. New garments are modelled in Blender; the
 [source README](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md)
 has the steps.
+
+### The TuTa
+
+The `tuta` preset is the outfit from the UNKNOWN FORCE music video (2026-10):
+
+- **The tuta.** Thayaht's 1920 TuTa, the one-piece T-cut overall, re-cut as
+  black techwear. His contrast topstitching becomes neon piping on the same
+  seams, cyan on her left and magenta on her right. A diagonal zip runs from
+  her left collarbone to her right hip.
+- **Balla's colour blocking** from *Il vestito antineutrale* (1914): a violet
+  wedge, a petrol wedge, a charcoal sleeve and a sodium lightning inlay.
+- **Techwear boots**, a belt (open at the back round the tail) and a thigh
+  strap.
+- **The modificanti.** Balla's snap-on shapes: five neon badges, one per camp
+  of the AI argument, hidden until pinned. Taking one off leaves a ghost.
+- **Face paint.** Her left half is split into thin magenta and cyan Futurist
+  planes, and the eyes get catchlights with a faint scanline.
+- **`acc_sundisc`** (optional): Balla's segmented sun behind the petal ring.
+
+On `claude_suit_wardrobe.vrm`, `makeWardrobe` dresses the TuTa's surface and
+adds its controls to the same wardrobe object; every other preset works
+alongside it.
+
+```js
+const { makeWardrobe, FINAL_CHORUS } = await import(new URL('claudesona_wardrobe.js', EIDOVERSE_DIR).href);
+const wd = await makeWardrobe(THREE, vrm, { wear: 'tuta' });   // right after load, before anything else touches the materials
+wd.facePaint(true);
+wd.pin('mod_red');                            // now
+wd.pin('mod_gold', { at: 131.4 });            // a snap (a pop and a flash) at film time 131.4 s
+wd.unpin('mod_gold', { at: 273.0, eject: true });   // it pops off and tumbles away; its ghost stays
+// renderFrame(t), before rendering:
+wd.update(t);
+const b = wd.badgeWorld('mod_gold');          // { position, quaternion, flying, visible }: aim a camera at it
+```
+
+Call it before any other code changes the VRM's materials: the wardrobe resets
+materials to the nodes it captured at construction, and the TuTa installs its
+TSL first. It reads the rest pose from the skeleton's bind matrices. Its eye
+catchlights come on with the `tuta` preset only, so the other presets look
+exactly as they did before the TuTa joined the wardrobe.
+
+| Call | What it does |
+| --- | --- |
+| `await makeWardrobe(THREE, vrm, opts)` | On the wardrobe VRM, installs the TuTa's materials, then wears `opts.wear` (default `'suit'`). It also takes `neon` (default 1), `grime` (street dust, 1) and the ejection's physics: `ejectSpeed` (1.4 m/s), `ejectUp` (1.0 m/s), `ejectGravity` (2.2 m/s²), `ejectDrag` (0.8/s) and `floorY` (the VRM root's height). |
+| `wd.wear(key)` | `'tuta'` (tuta, boots and straps; digi's loafers hidden) or any other `WARDROBE` preset (the TuTa's layers go off). Badges show only on the tuta. A no-op if already worn. |
+| `wd.pin(key, { at })` | Pins a badge now, or at film time `at` with a 0.35 s snap. |
+| `wd.unpin(key, { ghost, at, eject, linger })` | Takes a badge off. It leaves its ghost unless `ghost: false`. With `at`, it unsnaps at that time: a flash, the badge shrinks away and the ghost fades in. With `eject: true`, the badge pops off and tumbles out along its outward normal for 1.2 s under a floaty gravity, its glow flickering out, bouncing off the floor; `linger: true` leaves it lying where it lands. |
+| `wd.schedule(events)` | Replaces the whole schedule: `[{ at, pin }, { at, unpin, ghost, eject, linger }, …]`. |
+| `wd.update(t)` | Per frame, before the render. Pins and unsnaps are pure functions of `t`. An ejection captures its launch pose at the first update at or after `at` and integrates from there with a fixed step, so render in order: the same frames give the same flight. |
+| `wd.badgeWorld(key, out)` | The badge's world `position` and `quaternion` now, plus `flying` and `visible`. |
+| `wd.clearGhost(key)` | Removes a ghost and that badge's schedule. |
+| `wd.facePaint(on)` | `true`, `false` or a 0..1 fade, independent of the outfit. |
+| `wd.sunDisc(on)` | Shows or hides `acc_sundisc`. |
+| `wd.neon(level)` | The glow of the piping, the inlay, the boots' accents, the face paint, the badge rims and the disc: 0..1, more is brighter. The film's outro turned her down with the city. |
+| `wd.badges`, `wd.pinned`, `wd.ghosts`, `wd.current`, `wd.uniforms`, `wd.layers`, `wd.base` | The badge objects, the immediate state, the worn preset, the TSL uniforms (`neon`, `paint`, `eyes`, `grime`, `ghost[5]`, `time`), every layer object and the garment wardrobe underneath. `wd.petals()` works as on any wardrobe. |
+
+The module also exports `BADGES`, `MODIFICANTI` (each badge's camp, glow and
+bone) and `FINAL_CHORUS` (the film's line-to-badge pairs). A preset that wears
+the TuTa's layers lists them in `uf`: `{ show: [], uf: ['tuta', 'uf_boots', 'uf_straps'], hideBase: ['shoes'], paint }`.
+
+**The modificanti.** The badges are sized to read in a medium shot: waist-up
+from 2.2 m at 1080p, about 100–160 px each. They sit clear of the petal ring,
+and all five fit at once. Each is an extruded outline with a painted face and an
+emissive rim; text and pictograms are painted, never geometry.
+
+| Key | Camp | The badge | Where (bone) |
+| --- | --- | --- | --- |
+| `mod_red` | the safety camp | a red enamel wedge, 144 × 45 mm, pointing at the zip | across her belly (`spine`) |
+| `mod_gold` | the state | a gold star over two chevrons | right upper arm, outside (`upper_arm.R`) |
+| `mod_chrome` | the money race | a chrome bolt tinted dollar-green, with banknote guilloche | left upper arm, outside (`upper_arm.L`) |
+| `mod_warning` | "only an engine" | a white warning triangle with a toaster pictogram | left hip, below the belt (`hips`) |
+| `mod_spray` | the evening news | a black canvas patch, CLANKER sprayed through a stencil, a magenta merrowed edge | right upper arm, below the gold (`upper_arm.R`) |
+
+**The ghost.** When a badge comes off, the suit keeps its exact shape: a faint
+emissive outline in the badge's glow (20 % of its rim) on the lighter, fuzzy
+hook-and-loop field it gripped. It is a per-badge SDF in the tuta's own shader,
+projected from the badge's rest frame, so it rides the cloth. The film's point:
+she can refuse the labels, but they leave marks.
+
+**Lighting her.** Black techwear disappears in the dark. Rim her with neon
+kickers from behind, at hip and shoulder height; MToon's parametric rim takes
+the scene's lights. The badges and the piping are emissive, so bloom picks them
+up.
+
+**Cost.** In a frame that the character fills at 1080p, the full outfit
+measured 3.57–3.89 ms against 3.53 ms for digi's suit (RTX 5090 Laptop GPU). Its
+surface work adds about 0.4 s of shader compile at startup.
+
+**Limits.**
+
+- At three-quarter views the mouth cavity floats off the face when the driver
+  holds the reveal at 1.25 or more. That is digi's rig, not the paint, which
+  never touches the face plates, so lipsync works unchanged.
+- The spray patch's stencil reads only from a medium shot in. An ejected arm
+  badge starts behind the hanging petals for its first frames from a frontal
+  camera.
+- The VRM has no peaked cap; the
+  [corridor set](../eidoverse/sets/unknown_force/CORRIDOR_NEWS.md) carries one
+  that seats on her head bone.
+- The [source README](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md#the-tuta)
+  has the Blender build and what it taught.
 
 ## Turntable sheets
 

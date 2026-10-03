@@ -96,6 +96,149 @@ For switchable effects set `opts[effect].layer` to `under` or `over` through
 Avoid coplanar overlay elements and keep the central frame available for the
 subject. Adjust tint/glitch uniforms on beats; preserve text legibility.
 
+## Parole in libertà — `parole.js`
+
+Lyric captions as Marinetti's words-in-freedom, made for the UNKNOWN FORCE
+music video (2026-10). Every sung word is thrown in on its own time and lands
+in a seeded, deterministic Futurist layout. Words sit on torn paper slips in
+mixed Didone, slab and grotesk, with letterpress grain and a misregistered
+plate, and thin neon tubes and LED slips accent them. The module also lays out
+documentary quotes as collage blocks. It draws into an overlay layer, so a
+post pass under the HUD never paints it.
+
+```js
+const P = await import(new URL('parole.js', EIDOVERSE_DIR).href);
+const hud = makeOverlayLayer({ fov: camera.fov });
+const parole = await P.makeParole(THREE, { overlay: hud, timing: { lines } });   // registers its fonts
+parole.addLine({ text: 'UNKNOWN FORCE', start: 26, end: 33.5, template: 'rows', sizeScale: 1.6 });   // a title
+// renderFrame(t), after positioning the camera:
+parole.setSpare({ x, y, r });   // her face where THIS shot puts it (frame heights, centre origin, y up)
+parole.setHush(0);              // 0 = the argument, 1 = turned down
+parole.update(t);               // deterministic in t: any frame, any order
+```
+
+`timing` is `[{ text, start, end, words: [{ w, s, e }] }]` or `{ lines }` in
+film seconds. `align_lyrics.py`'s `{ word, start, end }` and `{ t0, t1 }`
+spellings work too. A line may carry `section` and `echo: true`. A line leaves
+0.85–1.6 s after its last word, always before the next line arrives.
+
+**How a line is drawn.** Words fall into four levels: connectives, ordinary
+words, strong words, and HUGE words. The HUGE words have their own treatment:
+CAPITAL LETTERS as a torn-out post card, SUPREME INTELLIGENCE as a gold plaque,
+UNKNOWN FORCE on Depero's red wedge, CLANKER sprayed through a stencil. Each
+camp's words carry its colour and typeface: red for the safety camp, gold for
+the state, chrome-green for the money camp, warning plates for "only an
+engine", magenta spray for the news. The singer's own words are paper-white
+under a neon tube. The templates are `rows` (a tilted, staircased baseline),
+`stair`, `band` (slips on a trajectory) and `calm`. All of them keep reading
+order. Section onomatopoeia and signs fill only free space.
+
+**The face.** `spare` keeps the singer's face clear: line blocks anchor where
+they cover it least, and the decor and the CLANKER aside avoid it. A line takes
+its layout when it is first built, so call `setSpare` every frame with the
+face's projected position. Each new line then avoids the face where the current
+shot puts it. The film computed the face from the head bone:
+
+```js
+const h = new THREE.Vector3(); vrm.humanoid.getNormalizedBoneNode('head').getWorldPosition(h); h.y += 0.1;
+const e = h.clone().add(new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).multiplyScalar(0.24));
+const a = h.clone().project(camera), b = e.clone().project(camera), asp = WIDTH / HEIGHT;
+const inView = vrm.scene.visible && Math.abs(a.x) < 1.1 && Math.abs(a.y) < 1.1 && a.z < 1;
+const r = Math.hypot((b.x - a.x) * asp / 2, (b.y - a.y) / 2) * 1.15;
+parole.setSpare(inView && Number.isFinite(r) ? { x: a.x * asp / 2, y: a.y / 2, r: Math.min(0.35, Math.max(0.06, r)) } : { r: 0 });
+```
+
+**Pre-heard captions.** `parole.preheard(lineIndex, alternatives, opts)` shows
+each camp's answer for the singer before she sings it, then strikes it through
+as she does. An alternative is a string or `{ text, camp }`, where camp is
+`safety`, `state`, `money`, `microsoft` or `news`; use up to four words each.
+
+- `layout: 'rim'` puts them in the four corners, pointing in. `'brace'` stacks
+  them under a `}`.
+- The default `mode: 'roll'` strikes one guess every `stagger` (0.35 s) from
+  the line's first word.
+  - Each guess arrives `fly` (0.14 s) plus `readable` (1.05 s) before its
+    strike, so it can be read for at least a second.
+  - At most four are on screen at once.
+  - A slow line wants `stagger` or `strikeAt`, so the last strike lands on the
+    big word.
+- `mode: 'together'` strikes them all at once, on the first HUGE word or on
+  `strikeAt`.
+
+By default the first "I'm the unknown force" of a chorus gets
+`P.PREHEARD_DEFAULT`. Pass `preheardDefault: false` to turn that off.
+
+**Quotes.** `parole.quote(text, { t0, t1, attribution, year, style, accent, emphasis, width, x, y, alignWith })`
+shows the text exactly as given. It is never re-worded or re-cased; emphasis is
+size and weight only. A block flies in from depth, settles to be read, and
+flies past the camera at `t1`. `style` is `'paper'` (a cream slip, black and
+red ink) or `'plate'` (a dark plate, chrome).
+
+With `alignWith: <an earlier quote's handle>`, the two quotes become one
+interlinear layout:
+
+- the words are set in columns from an LCS alignment;
+- the earlier quote's paper strips have the later one's dark plates slotted
+  under them;
+- `=` stands under every shared word and `↓` under every changed one, and the
+  changed words carry each side's accent;
+- the years stand at the left with the gap between them (`+111`).
+
+The film used it for Marinetti's 1912 line and Andreessen's 2023 paraphrase.
+Both stay up until the later `t1`.
+
+**Calm and hush.** A line with `calm: true` (or `template: 'calm'`, often with
+`decor: false, wedge: false`) is set small, lowercase and level in Space Mono,
+centred low, rising word by word. `setHush(x)` turns the whole layout down in
+two phases, and any value it holds is a clean layout:
+
+- From 0 to 0.75 each block shrinks, levels and settles low as one rigid
+  piece. Signs, bands, the wedge and the asides are gone by 0.5; the tubes
+  stop flickering.
+- From 0.75 to 1 the words re-set into calm rows.
+
+**Styling.** `styleOverrides` is
+`{ lines: { <index>: {...} }, byText: { '<line, lowercased>': {...} }, words: { <word>: {...} } }`.
+
+- A line can set `template`, `seed`, `anchor: [x, y]`, `theta` (degrees),
+  `sizeScale`, `spare`, `hold`, `wedge`, `decor` and `calm`.
+- A word can set `level` (0–3), `role` (a key of `P.FONTS`), `upper`,
+  `accent: { color, mode }` and `ink`.
+- The inks:
+  - print: `print`, `printRed`, `printInv`, `printBlack`, `printBlackRed`,
+    `goldPrint`, `safetyPrint`, `bare`;
+  - dark slips: `led:#hex`, `stencilSlip`;
+  - special: `post`, `warning`, `spray`, `soft`;
+  - quotes: `chrome`, `chromeW`, `neon:#hex`;
+  - reserved for the camps: `chromeG`, `gold`.
+
+The lexicon is written for that song: the HUGE words, the camps' words and
+`SECTIONS`. For another song, give every line its `section` and steer the rest
+with overrides.
+
+**Fonts.** `registerFonts()` registers 13 faces from `eidoverse/assets/fonts/`
+under `UF …` names, and `makeParole` calls it. Nine were added with this module
+(Anton, Archivo Black, Alfa Slab One, Old Standard TT, Space Mono, Bungee); each
+family's `OFL-*.txt` licence is beside it. The other four were already bundled.
+
+**Compositing and cost.** The engine mixes the overlay into the scene before
+tone mapping, so solid ink passes through the inverse of the renderer's ACES
+and lands on screen as drawn. The material writes straight colour.
+
+- Each line or quote group is one mipmapped canvas atlas drawn by one
+  `InstancedMesh`. Per frame only the instance matrices and four floats per
+  sprite change.
+- `update` takes about 0.1 ms.
+- Building a group costs 25–180 ms on the frame it is first needed (a chorus
+  entry with five guesses is the heaviest). `parole.prewarm(from, to)` moves
+  that into setup.
+- `P.build(THREE, opts)` wraps the API in the set/prop module shape
+  (`update(t, { hush })`).
+
+**Limits.** Two consecutive wide lines can overlap for about 0.3 s while the
+old one is thrown off. The layout reads the face once per line, so a cut in
+the middle of a line keeps the old shot's clearance.
+
 ## Video displayed inside the scene
 
 ```bash

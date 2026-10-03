@@ -57,17 +57,16 @@ Library (31 effects) — the families:
 - **Distort**: `melt`, `wavy`, `kaleidoscope`
 - **Blur/focus**: `focus_blur` (DoF), `radial_blur`, `box_blur`, `hash_blur`
 
-## Era looks — `era_looks.js`
+## Era looks — `effects_tsl/era_looks.js`
 
 Graphic-arts looks from the history of computing and print. Every look is a
 weight on one post pass, so looks crossfade and stack. They were made for
 the DAISY music video, where each era's voice gets its era's picture. The
-pass is not one of the injected effects above; a scene imports the module,
-which registers `era_looks` with the same registry:
+pass is injected and registered like the effects above (its glyph atlas and
+blur pyramid are built once at load); a scene asks for `era_looks`:
 
 ```js
-const { registerEraLooks, ERA_LOOKS, applyLook } = await import(new URL('era_looks.js', EIDOVERSE_DIR).href);
-await registerEraLooks();   // once, in setup(): registers 'era_looks', draws the line-printer glyph atlas
+const { ERA_LOOKS, applyLook } = EraLooksFX;   // the presets + the crossfade, on the injected effect
 globalThis._fx = CustomEffectsDeno.applyTo({ scene, camera, effects: 'era_looks' });
 // renderFrame(t): crossfade two presets (s = 0..1), update, then render
 applyLook(_fx.uniforms, ERA_LOOKS.bell1961, ERA_LOOKS.mac1984, s);
@@ -132,6 +131,117 @@ as authored; a few warm tones sit just outside ACES's range, so newsprint
 prints a hair pinker. Halftone dots and watercolour paper stay fixed to the
 screen like a real page, so motion slides under them. `storybook` draws its
 lines alongside a VRM's MToon outline (on the claudesona the two coincide).
+
+## Aeropittura — `effects_tsl/aeropittura.js`
+
+The frame repainted as a Futurist painting of a dark cyberpunk night, made for
+the UNKNOWN FORCE music video (2026-10): Crali's aeropittura dives, Balla's
+street lights and sun cones, Boccioni's divisionist strokes, Carrà's dark
+grounds. Like the era looks it is one pass with a weight per ingredient, plus a
+master `force`, injected and registered like the others:
+
+```js
+const A = AeropitturaFX;   // LOOKS, PLANES, applyLook, setPlanes, RAMP
+globalThis._fx = CustomEffectsDeno.applyTo({ scene, camera, effects: 'aeropittura',
+    opts: { aeropittura: { layer: 'under' } } });   // under the HUD: captions stay crisp
+const U = _fx.uniforms;
+// renderFrame(t):
+A.applyLook(U, A.LOOKS.argue, 1);               // or applyLook(U, from, force, to, s): a crossfade
+A.setPlanes(U, A.PLANES.balla_sun);             // the plane family; switch it on cuts
+U.focal.value.set(fx, fy);                      // the idol the cones radiate from (uv, y down)
+U.spare.value.set(hx, hy, r);                   // a face kept readable (uv, y down; r in frame heights)
+await _fx.update(t);
+await _r.renderAsync(_s, _c);
+// on a camera cut: U.cut()                     // the time echoes restart from the new shot
+```
+
+**The looks.** `LOOKS` holds `off`, `hush` (the quiet floor: still a
+painting, just a calm one), `argue` and `storm`. The film used the look as the
+argument's volume: `argue` in the camps' rooms, `storm` in the choruses, `hush`
+at the end. It never set `off`, because a clean image would claim a pure
+outside that the song denies.
+
+**The ingredients** (0..1, each multiplied by `force`):
+
+- `echo`: simultaneity. R, G and B show different instants, about 50 ms apart.
+  Still things are untouched.
+- `multi`: Balla's repetitions, up to four older copies of anything that moves.
+- `strokes`: the divisionist stroke layers, broad over flats and fine at
+  edges. Each stroke is one colour from the scene, pushed warmer or cooler,
+  with a few toward the complement.
+- `under`: the anisotropic-Kuwahara underpainting the strokes sit on.
+- `halo`: Balla's *Street Light*, V-strokes of a light's colour and its
+  complement round every real light. Only display values above about 0.8 make
+  them, so a lit face does not grow flames.
+- `planes`: the plane family's slips, shadow planes, neon glazes and painted
+  plane edges.
+- `lines`: lines of force, drags along the contours of moving things and
+  sparse speed lines toward the focal point.
+- `palette`: the dark-cyberpunk gradient map (`RAMP`: wet black, petrol teal,
+  bruised violet, neon magenta, sodium, cold white). Saturated light keeps its
+  own hue.
+- `canvas`: canvas weave, a VHS scanline and grain.
+- `crisp`: hands fine detail back sharp (lettering, eyes, the mouth line).
+
+**The planes.** `PLANES` has six families:
+
+- `balla_sun`: rays and rings from the focal point (Balla's *Mercury Passing
+  Before the Sun*).
+- `revolt`: Russolo's chevrons.
+- `race_sun`: rays plus chevrons along `chevDir`.
+- `iridescent`: Balla's triangle lattice.
+- `dive`: rays and long diagonals.
+- `quiet`: a few diagonals.
+
+A family's plane ids switch at weight 0.5, so change families on cuts.
+
+**The other uniforms.**
+
+- `focal`: where the cones and speed lines start. Point it at the shot's idol:
+  the altar, the gold door, the floodlight, the singer.
+- `spin` turns the rays and the diagonals (radians).
+- `swirl` (radians at the centre) and `swirlR` (frame heights) make Crali's
+  vortex round the focal point, for a dive.
+- `brushAngle` is the stroke direction where the picture has no contours. The
+  default, 1.05 rad, is a Futurist diagonal.
+- `chevDir` aims the chevrons.
+
+**Reading shots.** In-scene text (a whiteboard, a plaque, a post) disappears
+under full brushwork. When the camera lands on words, ease the brush for the
+length of the shot and keep the planes, palette and canvas. The film eased in
+over 0.6 s and out over the last 0.45 s, toward these values:
+
+```js
+const READ = { strokes: 0.28, under: 0.3, halo: 0.15, lines: 0, multi: 0, crisp: 1 };
+for (const [k, v] of Object.entries(READ)) U[k].value += (v - U[k].value) * k01;   // k01: 0 → 1 → 0
+```
+
+Overlay text (captions, `parole.js`, a chyron) is composited after this pass,
+so it is never painted.
+
+**The NaN hazard.** A non-finite `focal`, such as a point projected from
+behind the camera or a NaN handed back by a set, blacks out the whole frame:
+each plane's slip is `hash(id) × weight`, and 0 × NaN is NaN. Check
+`Number.isFinite` before writing `focal` and `spare`. The pass also clamps its
+HDR input, because a single Inf or NaN pixel would otherwise spread through the
+halos' blur pyramid. Sets with exp() in their shaders can produce one at
+grazing angles (see the [city's notes](../eidoverse/sets/unknown_force/CITY_HOLE.md#things-that-bit)).
+
+**Colour.** The pass paints in display space through the renderer's ACES and
+its exact inverse, so the ramp lands as authored. Under `argue`, near-white
+neutrals fall between the ramp's orange and white stops, so a white set paints
+peach. The film pulled `palette` down to 0.22 for its white showroom.
+
+**Art direction from Skye.** "More painterly like futurist paintings but also
+more dark cyberpunk rather than outrun": wet black streets, rain, fog, petrol
+teal and sodium, with neon magenta and cyan as accents, not the room. No
+outrun grid, no slit sun. "Vary the strokes so words in the scene stay
+readable; keep the radial planes": that became the reading shots above.
+
+**Cost.** About 6–8 ms per frame at 1920 × 1080 at `storm` on an RTX 5090
+Laptop GPU. The halo's blur pyramid skips its passes when `halo × force` is
+0. The [UNKNOWN FORCE sets](../eidoverse/sets/unknown_force/README.md) give
+their per-shot totals with the pass on.
 
 ## Renderer integration
 

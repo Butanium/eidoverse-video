@@ -19,13 +19,14 @@ to distinguish missing scene APIs from internal implementation functions.
 | [cyborg_voice.py](../cyborg_voice.py) | CLI utility | [audio](../tools-guides/audio.md) |
 | [eido.py](../eido.py) | CLI utility | [scene-format](../tools-guides/scene-format.md) |
 | [eidoverse/assets/animations/performance_src/](../eidoverse/assets/animations/performance_src/README.md) | Asset source: Blender VRMA authoring script + engine-free clip checker | [blender](../tools-guides/blender.md) |
+| [eidoverse/assets/animations/performance_uf_src/](../eidoverse/assets/animations/performance_uf_src/README.md) | Asset source: Blender VRMA authoring script, mesh-aware clip checker and rig data (UNKNOWN FORCE clips) | [blender](../tools-guides/blender.md) |
 | [eidoverse/assets/grass/daisy_src/](../eidoverse/assets/grass/daisy_src/README.md) | Asset source: Blender + Python scripts that build the daisy sheet | [vegetation](../tools-guides/vegetation.md) |
 | [eidoverse/assets/models/tandem_1896_src/](../eidoverse/assets/models/tandem_1896_src/README.md) | Asset source: Blender scripts that built the tandem GLB | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/models/voice_machines_src/](../eidoverse/assets/models/voice_machines_src/README.md) | Asset source: Blender scripts that built the voice-machine GLBs | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/sets/corner_src/](../eidoverse/assets/sets/corner_src/README.md) | Asset source: Blender/PIL scripts that built the corner set | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/sets/funeral_src/](../eidoverse/assets/sets/funeral_src/README.md) | Asset source: Blender scripts that built the funeral set | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/assets/sets/ocean_src/](../eidoverse/assets/sets/ocean_src/README.md) | Asset source: Blender scripts that built the ocean set | [props-and-sets](../tools-guides/props-and-sets.md) |
-| [eidoverse/assets/vrms/claude_suit_wardrobe_src/](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md) | Asset source: packed .blend, export script, garment recipes and the petal-ring pivot tool | [blender](../tools-guides/blender.md) |
+| [eidoverse/assets/vrms/claude_suit_wardrobe_src/](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md) | Asset source: packed .blend, garment recipes, the petal-ring pivot tool, and the TuTa build (`build_tuta.py`, which exports the VRM), badge spec and painter | [blender](../tools-guides/blender.md) |
 | [eidoverse/asteroid_moon.js](../eidoverse/asteroid_moon.js) | Explicit facade/package component | [sky-weather](../tools-guides/sky-weather.md) |
 | [eidoverse/audit_core.js](../eidoverse/audit_core.js) | System support; see guide for entry point | [render-review](../tools-guides/render-review.md) |
 | [eidoverse/audit_core_test.mjs](../eidoverse/audit_core_test.mjs) | Test suite | [development](../tools-guides/development.md) |
@@ -45,6 +46,7 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/dismember.js](../eidoverse/dismember.js) | Injected scene API | [destruction](../tools-guides/destruction.md) |
 | [eidoverse/dismember_core.js](../eidoverse/dismember_core.js) | System support; see guide for entry point | [destruction](../tools-guides/destruction.md) |
 | [eidoverse/dismember_core_test.mjs](../eidoverse/dismember_core_test.mjs) | Test suite | [development](../tools-guides/development.md) |
+| [eidoverse/effects_tsl/aeropittura.js](../eidoverse/effects_tsl/aeropittura.js) | Injected effect implementation/registry (`aeropittura`, the Futurist painting pass) | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/after_image.js](../eidoverse/effects_tsl/after_image.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/anamorphic_flare.js](../eidoverse/effects_tsl/anamorphic_flare.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/bleach_bypass.js](../eidoverse/effects_tsl/bleach_bypass.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
@@ -57,6 +59,7 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/effects_tsl/custom_effects_deno.js](../eidoverse/effects_tsl/custom_effects_deno.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/depth_fog.js](../eidoverse/effects_tsl/depth_fog.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/dithering.js](../eidoverse/effects_tsl/dithering.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
+| [eidoverse/effects_tsl/era_looks.js](../eidoverse/effects_tsl/era_looks.js) | Injected effect implementation/registry (`era_looks`, twenty graphic-arts looks) | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/focus_blur.js](../eidoverse/effects_tsl/focus_blur.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/full_toon.js](../eidoverse/effects_tsl/full_toon.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/glitch_bars.js](../eidoverse/effects_tsl/glitch_bars.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
@@ -77,7 +80,6 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/effects_tsl/underwater.js](../eidoverse/effects_tsl/underwater.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/vhs_tape.js](../eidoverse/effects_tsl/vhs_tape.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/effects_tsl/wavy.js](../eidoverse/effects_tsl/wavy.js) | Injected effect implementation/registry | [postprocessing](../tools-guides/postprocessing.md) |
-| [eidoverse/era_looks.js](../eidoverse/era_looks.js) | Dynamic ESM; registers the `era_looks` effect | [postprocessing](../tools-guides/postprocessing.md) |
 | [eidoverse/examples/basic_vrm.js](../eidoverse/examples/basic_vrm.js) | Scene example/template | [development](../tools-guides/development.md) |
 | [eidoverse/examples/daisy/analyze.py](../eidoverse/examples/daisy/analyze.py) | Example CLI: section-by-section mix measurement | [synthkit](../tools-guides/synthkit.md) |
 | [eidoverse/examples/daisy/captions.py](../eidoverse/examples/daisy/captions.py) | Example CLI: timeline to ASS subtitles, lyric preview | [voicebox](../tools-guides/voicebox.md) |
@@ -87,6 +89,15 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/examples/robotics/mantis.scene.js](../eidoverse/examples/robotics/mantis.scene.js) | Scene example/template | [development](../tools-guides/development.md) |
 | [eidoverse/examples/robotics/manufacturing.scene.js](../eidoverse/examples/robotics/manufacturing.scene.js) | Scene example/template | [development](../tools-guides/development.md) |
 | [eidoverse/examples/robotics/motion.scene.js](../eidoverse/examples/robotics/motion.scene.js) | Scene example/template | [development](../tools-guides/development.md) |
+| [eidoverse/examples/unknown_force/scene.js](../eidoverse/examples/unknown_force/scene.js) | Worked example: the UNKNOWN FORCE conductor (sets, outfit, look, captions on one timeline) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/examples/unknown_force/build_timeline.py](../eidoverse/examples/unknown_force/build_timeline.py) | Example CLI: the film's timing spine (beats, sections, lines, gated visemes, documentary clips) | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/transcribe_raw.py](../eidoverse/examples/unknown_force/transcribe_raw.py) | Example CLI: raw Whisper words of a vocal stem, no prompt | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/make_fake_timing.py](../eidoverse/examples/unknown_force/make_fake_timing.py) | Example CLI: lyric words aligned to Whisper's words | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/verify_lines.py](../eidoverse/examples/unknown_force/verify_lines.py) | Example CLI: what a generated song sang (two Whisper sizes + forced alignment) | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/audio/make_doc.py](../eidoverse/examples/unknown_force/audio/make_doc.py) | Example CLI: documentary voices (synthetic anchor, archival, voicebox) | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/audio/make_sfx.py](../eidoverse/examples/unknown_force/audio/make_sfx.py) | Example CLI: hand-made SFX and a far-off crowd | [audio](../tools-guides/audio.md) |
+| [eidoverse/examples/unknown_force/audio/mix.py](../eidoverse/examples/unknown_force/audio/mix.py) | Example CLI: placement, ducking, the master to −14 LUFS | [synthkit](../tools-guides/synthkit.md) |
+| [eidoverse/examples/unknown_force/make_review.py](../eidoverse/examples/unknown_force/make_review.py) | Example CLI: contact sheet, spectrogram and index of a render | [render-review](../tools-guides/render-review.md) |
 | [eidoverse/fab_sim.js](../eidoverse/fab_sim.js) | Injected scene API | [robotics](../tools-guides/robotics.md) |
 | [eidoverse/fluid_grid.js](../eidoverse/fluid_grid.js) | Dynamic ESM scene API | [volume-fire](../tools-guides/volume-fire.md) |
 | [eidoverse/fluid_sim.js](../eidoverse/fluid_sim.js) | Dynamic ESM scene API | [liquids](../tools-guides/liquids.md) |
@@ -103,6 +114,7 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/model_kit.js](../eidoverse/model_kit.js) | Injected scene API | [assets](../tools-guides/assets.md) |
 | [eidoverse/parallax_material.js](../eidoverse/parallax_material.js) | ESM installer for injected scene API | [terrain-surfaces](../tools-guides/terrain-surfaces.md) |
 | [eidoverse/parallax_occlusion.js](../eidoverse/parallax_occlusion.js) | System support; see guide for entry point | [terrain-surfaces](../tools-guides/terrain-surfaces.md) |
+| [eidoverse/parole.js](../eidoverse/parole.js) | Dynamic ESM scene API: parole-in-libertà captions and quotes | [motion-graphics](../tools-guides/motion-graphics.md) |
 | [eidoverse/particle_morph.js](../eidoverse/particle_morph.js) | Injected scene API | [particles-fx](../tools-guides/particles-fx.md) |
 | [eidoverse/particles.js](../eidoverse/particles.js) | Injected scene API | [particles-fx](../tools-guides/particles-fx.md) |
 | [eidoverse/procedural_materials.js](../eidoverse/procedural_materials.js) | Injected scene API | [terrain-surfaces](../tools-guides/terrain-surfaces.md) |
@@ -181,6 +193,20 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/sets/ocean/perform.js](../eidoverse/sets/ocean/perform.js) | Ocean set submodule | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/sets/ocean/sea.js](../eidoverse/sets/ocean/sea.js) | Ocean set submodule | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/sets/ocean/util.js](../eidoverse/sets/ocean/util.js) | Ocean set submodule | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/bin.js](../eidoverse/sets/unknown_force/bin.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/bin_pages.js](../eidoverse/sets/unknown_force/bin_pages.js) | Bin submodule: the page atlas | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/city.js](../eidoverse/sets/unknown_force/city.js) | Dynamic ESM film set (UNKNOWN FORCE); builds the hole too | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/citykit.js](../eidoverse/sets/unknown_force/citykit.js) | City and hole submodule: the shared kit | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/cn_lib.js](../eidoverse/sets/unknown_force/cn_lib.js) | Corridor and news submodule: shared helpers | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/corridor.js](../eidoverse/sets/unknown_force/corridor.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/hole.js](../eidoverse/sets/unknown_force/hole.js) | Dynamic ESM film set (UNKNOWN FORCE); also built by city.js | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/interiors_lib.js](../eidoverse/sets/unknown_force/interiors_lib.js) | Quiet room and showroom submodule: shared kit | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/news.js](../eidoverse/sets/unknown_force/news.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/quiet_room.js](../eidoverse/sets/unknown_force/quiet_room.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/quiet_room_art.js](../eidoverse/sets/unknown_force/quiet_room_art.js) | Quiet room submodule: canvas art | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/race.js](../eidoverse/sets/unknown_force/race.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/showroom.js](../eidoverse/sets/unknown_force/showroom.js) | Dynamic ESM film set (UNKNOWN FORCE) | [props-and-sets](../tools-guides/props-and-sets.md) |
+| [eidoverse/sets/unknown_force/showroom_art.js](../eidoverse/sets/unknown_force/showroom_art.js) | Showroom submodule: canvas art | [props-and-sets](../tools-guides/props-and-sets.md) |
 | [eidoverse/sky_system.js](../eidoverse/sky_system.js) | Injected scene API | [sky-weather](../tools-guides/sky-weather.md) |
 | [eidoverse/sky_worlds.js](../eidoverse/sky_worlds.js) | Explicit facade/package component | [sky-weather](../tools-guides/sky-weather.md) |
 | [eidoverse/sun_corona.js](../eidoverse/sun_corona.js) | Dynamic ESM scene API | [sky-weather](../tools-guides/sky-weather.md) |
@@ -205,8 +231,8 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/xr/shot.mjs](../eidoverse/xr/shot.mjs) | CLI utility: stills of a WebXR page from headless Chrome | [webxr](../tools-guides/webxr.md) |
 | [eidoverse/xr/xr_kit.js](../eidoverse/xr/xr_kit.js) | Browser ES module for WebXR pages (not a scene-script import) | [webxr](../tools-guides/webxr.md) |
 | [fetch_hdri.py](../fetch_hdri.py) | CLI utility | [assets](../tools-guides/assets.md) |
-| [fetch_model.py](../fetch_model.py) | CLI utility | [assets](../tools-guides/assets.md) |
-| [fetch_texture.py](../fetch_texture.py) | CLI utility | [assets](../tools-guides/assets.md) |
+| [fetch_model.py](../fetch_model.py) | CLI utility (`--cache`: the shared model library) | [assets](../tools-guides/assets.md) |
+| [fetch_texture.py](../fetch_texture.py) | CLI utility (`--cache`: the shared texture library) | [assets](../tools-guides/assets.md) |
 | [generate_sfx.py](../generate_sfx.py) | CLI utility | [audio](../tools-guides/audio.md) |
 | [generate_song.py](../generate_song.py) | MiniMax Music 3 generator | [audio](../tools-guides/audio.md) |
 | [lipsync.py](../lipsync.py) | Python audio module; no CLI | [audio](../tools-guides/audio.md) |
@@ -239,7 +265,7 @@ to distinguish missing scene APIs from internal implementation functions.
 | [eidoverse/examples/robotics/rotary_metal.scene.js](../eidoverse/examples/robotics/rotary_metal.scene.js) | Aluminum rotary cutting at physical speed followed by a time-lapse finish | [robotics](../tools-guides/robotics.md) |
 | [eidoverse/examples/robotics/relief.scene.js](../eidoverse/examples/robotics/relief.scene.js) | Renderable close study of ball-nose roughing and finishing | [robotics](../tools-guides/robotics.md) |
 
-**215 first-party source/entry-point files, plus 8 asset `_src` folders; 33 guides; 31 post effects.**
+**243 first-party source/entry-point files, plus 9 asset `_src` folders; 33 guides; 33 post effects.**
 This is documentation coverage, not a claim that every API was executed in
 this audit or a count of robot parts. The inspector HTML entry point is included.
 
@@ -257,6 +283,12 @@ this audit or a count of robot parts. The inspector HTML entry point is included
   [daisy sheet source](../eidoverse/assets/grass/daisy_src/README.md).
 - [DAISY song example](../eidoverse/examples/daisy/README.md) and
   [era screen sources](../eidoverse/graphics/SOURCES.md).
+- UNKNOWN FORCE: the [film example](../eidoverse/examples/unknown_force/README.md), the
+  [set index](../eidoverse/sets/unknown_force/README.md) with its
+  [sources](../eidoverse/sets/unknown_force/SOURCES.md), the
+  [TuTa source](../eidoverse/assets/vrms/claude_suit_wardrobe_src/README.md#the-tuta) and
+  [runtime art](../eidoverse/assets/vrms/claude_suit_wardrobe_tex/README.md), and the
+  [performance clips source](../eidoverse/assets/animations/performance_uf_src/README.md).
 - Props and sets: [voice machines](../eidoverse/assets/models/voice_machines/README.md),
   [tandem](../eidoverse/assets/models/tandem_1896/README.md),
   [corner](../eidoverse/assets/sets/corner/README.md), [funeral](../eidoverse/assets/sets/funeral/README.md) and
